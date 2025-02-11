@@ -1,1 +1,27 @@
 # Westin_Capstone
+
+## Project Overview
+I am creating an E-commerce website similar to that of Amazon, Ebay, Facebook Marketplace etc. I wanted to create a website for the main reason of learning how both the front-end and back-end of a website works. The focus of this is to utilize my current skills and build new ones with technology I have not used before.
+
+## Goals
+- Create a user-freindly user interface
+- Create user accounts
+- Have a cart to keep items
+- Be able to post an item
+- Have a complete backend with security
+
+## Technology 
+Front End:
+- Html
+- CSS
+- Javascript
+- React (framework)
+
+Back End
+-mySQL 
+-Node.js
+
+## Timeline
+Milestone 1: Have the basic interface and database setup 
+Milestone 2: Work on designing the interface and smoothing the process
+Milestone 3 & Final: Work on the details and performance of the website
