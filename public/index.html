@@ -19,19 +19,23 @@
 
   <script>
     // Fetch and display items
-    fetch('/api/items')
-      .then(response => response.json())
-      .then(data => {
-        const list = document.getElementById('items-list');
-        list.innerHTML = '';
-        data.forEach(item => {
-          const li = document.createElement('li');
-          li.textContent = `${item.item_name}: $${item.price}`;
-          list.appendChild(li);
-        });
-      })
-      .catch(err => console.error('Error fetching items:', err));
-
+fetch('/api/items')
+  .then(response => response.json())
+  .then(data => {
+    const list = document.getElementById('items-list');
+    list.innerHTML = '';
+    data.forEach(item => {
+      const li = document.createElement('li');
+      
+      // Display item name, price, and image
+      li.innerHTML = `
+        <p><strong>${item.item_name}:</strong> $${item.price}</p>
+        <img src="${item.image_url}" alt="${item.item_name}" style="max-width: 200px; max-height: 150px;">
+      `;
+      list.appendChild(li);
+    });
+  })
+  .catch(err => console.error('Error fetching items:', err));
     // Handle user form submission
     document.getElementById('user-form').addEventListener('submit', function (e) {
       e.preventDefault();
