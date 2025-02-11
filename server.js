@@ -41,17 +41,3 @@ app.get('/api/items', (req, res) => {
   app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
   });
-
-
-
-/************************************************************************************************************************************************************************************
-// Define a simple route
-app.get('/', (req, res) => {
-  connection.query('SELECT * FROM webpage.Items', (err, results) => {
-    if (err) {
-      return res.status(500).send('Database query failed.');
-    }
-    res.json(results);
-  });
-});
-************************************************************************************************************************************************************************************/
