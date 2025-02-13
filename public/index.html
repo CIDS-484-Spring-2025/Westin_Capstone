@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Items and Users</title>
+
+    
 </head>
 <body>
   <h1>Item List</h1>
@@ -16,6 +18,50 @@
     <button type="submit">Submit</button>
   </form>
   <p id="user-feedback"></p>
+
+    <!-- Cart Button -->
+    <button id="cartButton" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #e95f46;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1000;
+    ">Cart</button>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" style="
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #f1f1f1;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    transition: right 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 999;
+    ">
+    <h3>Your Cart</h3>
+    <ul id="cartItems" style="list-style: none; padding: 0;"></ul>
+    <button id="closeCart" style="
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #e95f46;
+        color: #f1f1f1;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    ">Close Cart</button>
+    </div>
+
+
 
   <script>
     // Fetch and display items
@@ -54,6 +100,32 @@ fetch('/api/items')
         })
         .catch(err => console.error('Error creating user:', err));
     });
+
+    // Open Cart Sidebar
+  document.getElementById('cartButton').addEventListener('click', () => {
+    document.getElementById('cartSidebar').style.right = '0';
+  });
+
+  // Close Cart Sidebar
+  document.getElementById('closeCart').addEventListener('click', () => {
+    document.getElementById('cartSidebar').style.right = '-300px';
+  });
+
+  // Example: Populate cart items dynamically
+  const cartItems = [
+    { name: 'Wireless Headphones', quantity: 2 },
+    { name: 'Gaming Mouse', quantity: 1 },
+    { name: 'Mechanical Keyboard', quantity: 1 }
+  ];
+
+  // Render cart items
+  const cartList = document.getElementById('cartItems');
+  cartItems.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = `${item.name} (x${item.quantity})`;
+    li.style.marginBottom = '10px';
+    cartList.appendChild(li);
+  });
   </script>
 </body>
 </html>
