@@ -17,11 +17,18 @@ Front End:
 - Javascript
 - React (framework)
 
-Back End
--mySQL 
--Node.js
+Back End:
+- mySQL 
+- Node.js
 
 ## Timeline
-Milestone 1: Have the basic interface and database setup 
-Milestone 2: Work on designing the interface and smoothing the process
-Milestone 3 & Final: Work on the details and performance of the website
+- Milestone 1: Have the basic interface and database setup 
+- Milestone 2: Work on designing the interface and smoothing the process
+- Milestone 3 & Final: Work on the details and performance of the website
+
+
+## Current Progress
+- Created the main database with three tables being Users, Cart, and Items
+- Created an html file with a list of some items I made up along with a form for creating a User
+- Created a javascript file called server.js that handles input and output information and delivers that to and from the database
+- Link to youtube https://youtu.be/sK8wKhjVnCM 
