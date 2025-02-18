@@ -32,12 +32,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route to retrieve all items from DB
 app.get('/api/items', (req, res) => {
   connection.query('SELECT * FROM Items', (err, results) => {
-    if (err) {
-      return res.status(500).send('Database query failed.');
-    }
-    res.json(results);
+      if (err) {
+          console.error('Error fetching items:', err);
+          return res.status(500).send(`Database query failed: ${err.message}`);
+      }
+      res.json(results);
   });
 });
+
 
 // Route for users creation
 app.post('/api/users', (req, res) => {
