@@ -12,7 +12,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        background-color: #f5f5f5;
+        background-color: #a7a6b9;
         text-align: center;
     }
 
@@ -52,12 +52,12 @@
     }
 
     .item p {
-        color: #555;
+        color: #bfc1d6;
         margin: 5px 0;
     }
 
     .item button {
-        background-color: #28a745;
+        background-color: #949be8;
         color: white;
         border: none;
         padding: 10px;
@@ -68,7 +68,7 @@
     }
 
     .item button:hover {
-        background-color: #218838;
+        background-color: #949be8;
     }
 </style>  
 
@@ -76,7 +76,7 @@
 
 <body>
   <h1 id='items list' style="
-  color: #e95f46;
+  color: #f03615;
   font-size: 38px;
   font-family: sans-serif;
 ">Available Items</h1>
@@ -98,7 +98,7 @@
   top: 20px;
   right: 20px;
   padding: 10px 20px;
-  background-color: #e95f46;
+  background-color: #f03615;
   color: white;
   border: none;
   border-radius: 5px;
@@ -136,63 +136,81 @@
 
 <script>
 
-  async function fetchItems() {
-      try {
-          const response = await fetch('/api/items');
-          const items = await response.json();
+// Cart array to store selected items
+let cart = [];
 
-          const itemsGrid = document.getElementById('itemsGrid');
-          itemsGrid.innerHTML = ''; // Clear previous items
+//user id for storing cart data
+let currentUserId = null;
 
-          items.forEach(item => {
-              const itemDiv = document.createElement('div');
-              itemDiv.className = 'item';
+// Function to fetch items from server and display them
+async function fetchItems() {
+  try {
+    const response = await fetch('/api/items');
 
-              itemDiv.innerHTML = `
-                  <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.item_name}">
-                  <h4>${item.item_name}</h4>
-                  <p>$${item.price}</p>
-                  <button onclick="addToCart('${item.item_name}')">Add to Cart</button>
-              `;
+    //log response status
+    console.log('Response status:' + response.status);
 
-              itemsGrid.appendChild(itemDiv);
-          });
+    if (!response.ok) {
+      throw new Error('Network error! status: ', response.status);
+    }
 
-      } catch (error) {
-          console.error('Error fetching items:', error);
-          document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
-      }
+    const items = await response.json();
+
+    console.log('Items reeived: ', items);
+
+    // Display items 
+    const itemsGrid = document.getElementById('itemsGrid');
+    itemsGrid.innerHTML = ''; // Clear previous items
+
+    items.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'item';
+
+      itemDiv.innerHTML = `
+        <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.item_name}">
+        <h4>${item.item_name}</h4>
+        <p>$${parseFloat(item.price).toFixed(2)}</p>
+        <button onclick="addToCart(${item.item_id}, '${item.item_name}', ${item.price}, '${item.image_url}')">Add to Cart</button>
+      `;
+
+      itemsGrid.appendChild(itemDiv);
+    });
+
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
   }
+}
 
+// Function to add items to the users cart
+function addToCart(item_id, item_name, price, image_url) {
+    const existingItem = cart.find(cartItem => cartItem.id === item_id);
+    if (existingItem) {
+        existingItem.quantity += 1; // Increase quantity if item already in cart
+    } else {
+        cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
+    }
+    updateCartUI();
+    alert(`${item_name} added to cart!`); // Popup confirmation
+}
 
-        // Placeholder function for adding to cart
-        function addToCart(itemName) {
-            alert(`${itemName} added to cart!`);
-        }
+// Function to update the cart display in the sidebar
+function updateCartUI() {
+    const cartList = document.getElementById('cartItems');
+    cartList.innerHTML = '';
 
-        // Initialize the items display on page load
-        window.onload = fetchItems;
+    cart.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <img src="${item.image_url}" alt="${item.item_name}" style="width: 50px; height: 50px; border-radius: 5px; margin-right: 10px;">
+            <strong>${item.item_name}</strong> - $${item.price.toFixed(2)} (x${item.quantity})
+        `;
+        cartList.appendChild(li);
+    });
+}
 
-  
-    // Fetch and display items
-//fetch('/api/items')
-  //.then(response => response.json())
-  //.then(data => {
-    //const list = document.getElementById('items-list');
-    //list.innerHTML = '';
-    //data.forEach(item => {
-      //const li = document.createElement('li');
-      
-      // Display item name, price, and image
-      //li.innerHTML = `
-       // <p><strong>${item.item_name}:</strong> $${item.price}</p>
-       // <img src="${item.image_url}" alt="${item.item_name}" style="max-width: 200px; max-height: 150px;">
-     // `;
-     // list.appendChild(li);
-   // });
- // }) 
-
-  //.catch(err => console.error('Error fetching items:', err));
+  // Initialize the items display on page load
+  window.onload = fetchItems;
 
   // Handle user form submission
   document.getElementById('user-form').addEventListener('submit', function (e) {
@@ -213,9 +231,25 @@
       .catch(err => console.error('Error creating user:', err));
   });
 
+  // Fetch cart items
+  async function fetchCart() {
+    if (!currentUserId) return;
 
-  // =================================================
-   // Open Cart Sidebar
+    try {
+      const response = await fetch(`/api/cart/${currentUserId}`);
+      const cartItems = await response.json();
+
+      cart = cartItems; // Update the cart array with items from the database
+      updateCartUI();
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+    }
+  }
+
+  // Fetch items on page load
+  document.addEventListener('DOMContentLoaded', fetchItems);
+
+  // Open Cart Sidebar
   document.getElementById('cartButton').addEventListener('click', () => {
     document.getElementById('cartSidebar').style.right = '0';
   });
@@ -225,22 +259,6 @@
     document.getElementById('cartSidebar').style.right = '-300px';
   });
 
-  // Example: Populate cart items dynamically
-  const cartItems = [
-    { name: 'Wireless Headphones', quantity: 2 },
-    { name: 'Gaming Mouse', quantity: 1 },
-    { name: 'Mechanical Keyboard', quantity: 1 }
-  ];
-
-  // Render cart items
-  const cartList = document.getElementById('cartItems');
-  cartItems.forEach(item => {
-    const li = document.createElement('li');
-    li.textContent = `${item.name} (x${item.quantity})`;
-    li.style.marginBottom = '10px';
-    cartList.appendChild(li);
-  });
-  // =================================================
   </script>
 </body>
 </html>
