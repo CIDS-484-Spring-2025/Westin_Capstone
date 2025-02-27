@@ -1,17 +1,16 @@
-// Import required modules
 const express = require('express');
-const mysql = require('mysql2');
-const path = require('path');
-
 const app = express();
 const port = 3001;
+const bodyParser = require('body-parser');
+const mysql = require('mysql2'); // Use mysql2 instead of mysql
+const path = require('path');
 
 // Connect to MySQL Database
 const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
-  user: 'root',
-  password: 'W6BjjngNf',
+  user: 'root', // Use your MySQL username
+  password: 'W6BjjngNf', // Use your MySQL password
   database: 'webpage'
 });
 
@@ -26,43 +25,112 @@ connection.connect(err => {
 // Parse JSON bodies
 app.use(express.json());
 
-// Serve static HTML files
+// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route to retrieve all items from DB
+// Fetch items
 app.get('/api/items', (req, res) => {
-  connection.query('SELECT * FROM Items', (err, results) => {
-      if (err) {
-          console.error('Error fetching items:', err);
-          return res.status(500).send(`Database query failed: ${err.message}`);
-      }
-      res.json(results);
+  const query = 'SELECT * FROM items';
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching items:', err);
+      return res.status(500).json({ error: 'Database error.' });
+    }
+    res.json(results);
   });
 });
 
-
-// Route for users creation
-app.post('/api/users', (req, res) => {
-  const { username, email } = req.body;
-
-  if (!username || !email) {
-    return res.status(400).json({ error: 'Username and Email are required.' });
-  }
-
-  connection.query(
-    'INSERT INTO Users (username, email) VALUES (?, ?)',
-    [username, email],
-    (err, results) => {
-      if (err) {
-        console.error('Error inserting user:', err);
-        return res.status(500).json({ error: err.sqlMessage });
-      }
-      res.status(201).json({ message: 'User created!', userId: results.insertId });
+// Search items
+app.get('/api/search', (req, res) => {
+  const searchTerm = req.query.q;
+  console.log('Search term:', searchTerm); // Log the search term
+  const query = `
+    SELECT * FROM items
+    WHERE item_name LIKE ?
+  `;
+  connection.query(query, [`%${searchTerm}%`], (err, results) => {
+    if (err) {
+      console.error('Error searching items:', err);
+      return res.status(500).json({ error: 'Database error.', details: err.message });
     }
-  );
+    console.log('Search results:', results); // Log the search results
+    res.json(results);
+  });
 });
 
-// Start the server (outside route handlers)
+// Add item to cart
+app.post('/api/cart', (req, res) => {
+  const { userId, itemId } = req.body;
+
+  // Check if the item already exists in the cart
+  const checkQuery = 'SELECT * FROM cart WHERE user_id = ? AND item_id = ?';
+  connection.query(checkQuery, [userId, itemId], (err, results) => {
+    if (err) {
+      console.error('Error checking cart:', err);
+      return res.status(500).json({ error: 'Database error.' });
+    }
+
+    if (results.length > 0) {
+      // Item exists, increment the quantity
+      const updateQuery = 'UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND item_id = ?';
+      connection.query(updateQuery, [userId, itemId], (err, results) => {
+        if (err) {
+          console.error('Error updating cart:', err);
+          return res.status(500).json({ error: 'Database error.' });
+        }
+        res.json({ message: 'Item quantity updated in cart.' });
+      });
+    } else {
+      // Item does not exist, add a new entry
+      const insertQuery = 'INSERT INTO cart (user_id, item_id, quantity) VALUES (?, ?, 1)';
+      connection.query(insertQuery, [userId, itemId], (err, results) => {
+        if (err) {
+          console.error('Error adding to cart:', err);
+          return res.status(500).json({ error: 'Database error.' });
+        }
+        res.json({ message: 'Item added to cart.' });
+      });
+    }
+  });
+});
+
+// Fetch cart items
+app.get('/api/cart/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const query = `
+    SELECT c.item_id, i.item_name, i.price, i.image_url, c.quantity
+    FROM cart c
+    JOIN items i ON c.item_id = i.item_id
+    WHERE c.user_id = ?
+  `;
+  connection.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error('Error fetching cart:', err);
+      return res.status(500).json({ error: 'Database error.' });
+    }
+    res.json(results);
+  });
+});
+
+// Create a new user
+app.post('/api/users', (req, res) => {
+  const { username, email } = req.body;
+  const query = 'INSERT INTO users (username, email) VALUES (?, ?)';
+  connection.query(query, [username, email], (err, results) => {
+    if (err) {
+      console.error('Error creating user:', err);
+      return res.status(500).json({ error: 'Database error.' });
+    }
+    res.json({ userId: results.insertId });
+  });
+});
+
+// Serve the index.html file for the root URL
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
