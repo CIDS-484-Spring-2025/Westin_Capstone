@@ -4,86 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Items and Users</title>
-
-  <!-- Item Grid styling -->
-  <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        background-color: #a7a6b9;
-        text-align: center;
-    }
-
-    #itemsGrid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .item {
-        flex: 1 1 calc(25% - 20px);
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #fff;
-        padding: 15px;
-        transition: transform 0.3s;
-        max-width: 250px;
-    }
-
-    .item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .item img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 10px;
-    }
-
-    .item h4 {
-        margin: 10px 0;
-    }
-
-    .item p {
-        color: #bfc1d6;
-        margin: 5px 0;
-    }
-
-    .item button {
-        background-color: #949be8;
-        color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-        width: 100%;
-    }
-
-    .item button:hover {
-        background-color: #949be8;
-    }
-</style>  
+  <link rel="stylesheet" href="styles.css">
 
 </head>
 
 <body>
 
-  <!-- Search Input -->
-  <input type="text" id="searchInput" placeholder="Search for items...">
-  <button id="searchButton">Search</button>
+<!-- Search Input -->
+<input type="text" id="searchInput" placeholder="Search for items...">
+<button id="searchButton">Search</button>
 
-  <h1 id='items list' style="
-  color: #f03615;
-  font-size: 38px;
-  font-family: sans-serif;
+<h1 id='items list' style="
+color: #f03615;
+font-size: 38px;
+font-family: sans-serif;
 ">Available Items</h1>
 
 <div id="itemsGrid"></div>
@@ -98,45 +32,13 @@
 <p id="user-feedback"></p>
 
   <!-- Cart Button -->
-  <button id="cartButton" style="
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  background-color: #f03615;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  z-index: 1000;
-  ">Cart</button>
+  <button id="cartButton" class="cart-button">Cart</button>
 
   <!-- Cart Sidebar -->
-  <div id="cartSidebar" style="
-  position: fixed;
-  top: 0;
-  right: -300px;
-  width: 300px;
-  height: 100%;
-  background-color: #f1f1f1;
-  box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-  transition: right 0.3s ease;
-  padding: 20px;
-  box-sizing: border-box;
-  z-index: 999;
-  ">
-  <h3>Your Cart</h3>
-  <ul id="cartItems" style="list-style: none; padding: 0;"></ul>
-  <button id="closeCart" style="
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #e95f46;
-      color: #f1f1f1;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-  ">Close Cart</button>
+  <div id="cartSidebar" class="cart-sidebar">
+      <h3>Your Cart</h3>
+      <ul id="cartItems" class="cart-items"></ul>
+      <button id="closeCart" class="close-cart">Close</button>
   </div>
 
 
