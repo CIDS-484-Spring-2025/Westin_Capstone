@@ -70,11 +70,12 @@ async function fetchItems() {
       itemDiv.className = 'item';
 
       itemDiv.innerHTML = `
-        <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.item_name}">
-        <h4>${item.item_name}</h4>
-        <p>$${parseFloat(item.price).toFixed(2)}</p>
-        <button onclick="addToCart(${item.item_id}, '${item.item_name}', ${parseFloat(item.price)}, '${item.image_url}')">Add to Cart</button>
-      `;
+      <img src="${item.image_url}" alt="${item.item_name}" class="item-image">
+                        <h3 class="item-name">${item.item_name}</h3>
+                        <p class="item-description">${item.item_description}</p>
+                        <p class="item-price">$${parseFloat(item.price).toFixed(2)}</p>
+                        <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+                    `;
 
       itemsGrid.appendChild(itemDiv);
     });
