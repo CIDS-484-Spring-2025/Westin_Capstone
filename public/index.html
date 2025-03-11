@@ -41,7 +41,6 @@ font-family: sans-serif;
       <button id="closeCart" class="close-cart">Close</button>
   </div>
 
-
 <script>
 
 // Cart array to store selected items
@@ -133,27 +132,42 @@ async function addToCart(item_id, item_name, price, image_url) {
 
     // Store cart item in the database
     if (currentUserId) {
-                try {
-                    const response = await fetch('/api/Cart', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: currentUserId, itemId: item_id })
-                    });
-                    if (!response.ok) {
-                        throw new Error('Failed to add item to cart in the database.');
-                    }
-                } catch (error) {
-                    console.error('Error adding item to cart in the database:', error);
-                }
-            }
+        try {
+          const response = await fetch('/api/Cart', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: currentUserId, itemId: item_id })
+          });
+          if (!response.ok) {
+              throw new Error('Failed to add item to cart in the database.');
+          }
+      } catch (error) {
+          console.error('Error adding item to cart in the database:', error);
+      }
+    }
 
-            alert(`${item_name} added to cart!`); // Popup confirmation
-        }
+    alert(`${item_name} added to cart!`); // Popup confirmation
+}
 
   // Function to remove items from the user's cart
-  function removeFromCart(item_id) {
-            cart = cart.filter(item => item.id !== item_id);
+  async function removeFromCart(item_id) {
+            cart = cart.filter(item => item.item_id !== item_id);
             updateCartUI();
+
+            // Remove cart item from the database
+            if (currentUserId) {
+                try {
+                    const response = await fetch(`/api/cart/${currentUserId}/${item_id}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to remove item from cart in the database.');
+                    }
+                } catch (error) {
+                    console.error('Error removing item from cart in the database:', error);
+                }
+            }
         }
 
 
@@ -235,9 +249,9 @@ async function searchItems() {
     });
 
   } catch (error) {
-    console.error('Error searching items:', error);
-    document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
-  }
+      console.error('Error searching items:', error);
+      document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
+    }
 }
 
 
