@@ -25,6 +25,20 @@ connection.connect(err => {
 // Parse JSON bodies
 app.use(express.json());
 
+// Create a new user
+app.post('/api/users', (req, res) => {
+  const { username, email } = req.body;
+  const query = 'INSERT INTO users (username, email) VALUES (?, ?)';
+  connection.query(query, [username, email], (err, results) => {
+    if (err) {
+      console.error('Error creating user:', err);
+      return res.status(500).json({ error: 'Database error.' });
+    }
+    const userId = results.insertId;
+    res.json({ userId: results.insertId });
+  });
+});
+
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -58,13 +72,13 @@ app.get('/api/search', (req, res) => {
   });
 });
 
-// Add item to cart
-app.post('/api/cart', (req, res) => {
-  const { userId, itemId } = req.body;
 
   // Check if the item already exists in the cart
-  const checkQuery = 'SELECT * FROM cart WHERE user_id = ? AND item_id = ?';
-  connection.query(checkQuery, [userId, itemId], (err, results) => {
+  // Add item to cart endpoint
+app.post('/api/cart', (req, res) => {
+  const { userId, itemId } = req.body;
+  const checkCartQuery = 'SELECT * FROM cart WHERE user_id = ? AND item_id = ?';
+  connection.query(checkCartQuery, [userId, itemId], (err, results) => {
     if (err) {
       console.error('Error checking cart:', err);
       return res.status(500).json({ error: 'Database error.' });
@@ -97,31 +111,13 @@ app.post('/api/cart', (req, res) => {
 // Fetch cart items
 app.get('/api/cart/:userId', (req, res) => {
   const userId = req.params.userId;
-  const query = `
-    SELECT c.item_id, i.item_name, i.price, i.image_url, c.quantity
-    FROM cart c
-    JOIN items i ON c.item_id = i.item_id
-    WHERE c.user_id = ?
-  `;
-  connection.query(query, [userId], (err, results) => {
+  const fetchCartQuery = 'SELECT * FROM cart WHERE user_id = ?';
+  connection.query(fetchCartQuery, [userId], (err, results) => {
     if (err) {
-      console.error('Error fetching cart:', err);
+      console.error('Error fetching cart items:', err);
       return res.status(500).json({ error: 'Database error.' });
     }
     res.json(results);
-  });
-});
-
-// Create a new user
-app.post('/api/users', (req, res) => {
-  const { username, email } = req.body;
-  const query = 'INSERT INTO users (username, email) VALUES (?, ?)';
-  connection.query(query, [username, email], (err, results) => {
-    if (err) {
-      console.error('Error creating user:', err);
-      return res.status(500).json({ error: 'Database error.' });
-    }
-    res.json({ userId: results.insertId });
   });
 });
 
