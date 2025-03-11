@@ -144,3 +144,13 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.remove-from-cart {
+    margin-left: auto;
+    padding: 5px 10px;
+    background-color: #e95f46;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
