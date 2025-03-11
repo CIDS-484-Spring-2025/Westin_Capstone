@@ -26,7 +26,15 @@ Back End:
 - Milestone 3 & Final: Work on the details and performance of the website
 
 ## Current Progress
+### Milestone 1
 - Created the main database with three tables being Users, Cart, and Items
 - Created an html file with a list of some items I made up along with a form for creating a User
 - Created a javascript file called server.js that handles input and output information and delivers that to and from the database
-- Link to youtube https://youtu.be/sK8wKhjVnCM 
+- Link to milestone 1 youtube https://youtu.be/sK8wKhjVnCM
+
+### Milestone 2
+- Updated UI
+- Added search functionality
+- Added cart functionality
+- Able to send data to the database
+  
