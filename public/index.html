@@ -74,7 +74,7 @@ async function fetchItems() {
               <h3 class="item-name">${item.item_name}</h3>
               <p class="item-description">${item.item_description}</p>
               <p class="item-price">$${parseFloat(item.price).toFixed(2)}</p>
-              <button class="add-to-cart" data-id="${item.id}" data-name="${item.item_name}" data-price="${item.price}" data-image="${item.image_url}">Add to Cart</button>
+              <button class="add-to-cart" data-id="${item.item_id}" data-name="${item.item_name}" data-price="${item.price}" data-image="${item.image_url}">Add to Cart</button>
           `;
 
           itemsGrid.appendChild(itemDiv);
@@ -97,32 +97,65 @@ async function fetchItems() {
     }
 }
 
+// Function to update the cart display in the sidebar
+function updateCartUI() {
+    const cartList = document.getElementById('cartItems');
+    cartList.innerHTML = '';
+
+    cart.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <img src="${item.image_url}" alt="${item.item_name}" style="width: 50px; height: 50px; border-radius: 5px; margin-right: 10px;">
+            <strong>${item.item_name}</strong> - $${parseFloat(item.price).toFixed(2)} (x${item.quantity})
+            <button class="remove-from-cart" data-id="${item.item_id}">Remove</button>
+        `;
+        cartList.appendChild(li);
+    });
+
+    // Add event listeners to the remove buttons
+    document.querySelectorAll('.remove-from-cart').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = this.getAttribute('data-id');
+            removeFromCart(itemId);
+        });
+    });
+}
+
 // Function to add items to the users cart
-function addToCart(item_id, item_name, price, image_url) {
-    const existingItem = cart.find(cartItem => cartItem.id === item_id);
+async function addToCart(item_id, item_name, price, image_url) {
+    const existingItem = cart.find(item => item.id === item_id);
     if (existingItem) {
         existingItem.quantity += 1; // Increase quantity if item already in cart
     } else {
         cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
     }
     updateCartUI();
-    alert(`${item_name} added to cart!`); // Popup confirmation
-}
 
-// Function to update the cart display in the sidebar
-function updateCartUI() {
-  const cartList = document.getElementById('cartItems');
-  cartList.innerHTML = '';
+    // Store cart item in the database
+    if (currentUserId) {
+                try {
+                    const response = await fetch('/api/Cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUserId, itemId: item_id })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to add item to cart in the database.');
+                    }
+                } catch (error) {
+                    console.error('Error adding item to cart in the database:', error);
+                }
+            }
 
-  cart.forEach(item => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <img src="${item.image_url}" alt="${item.item_name}" style="width: 50px; height: 50px; border-radius: 5px; margin-right: 10px;">
-      <strong>${item.item_name}</strong> - $${item.price.toFixed(2)} (x${item.quantity})
-    `;
-    cartList.appendChild(li);
-  });
-}
+            alert(`${item_name} added to cart!`); // Popup confirmation
+        }
+
+  // Function to remove items from the user's cart
+  function removeFromCart(item_id) {
+            cart = cart.filter(item => item.id !== item_id);
+            updateCartUI();
+        }
+
 
   // Initialize the items display on page load
   window.onload = fetchItems;
