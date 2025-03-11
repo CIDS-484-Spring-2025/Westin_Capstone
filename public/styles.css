@@ -154,3 +154,56 @@ body {
     border-radius: 5px;
     cursor: pointer;
   }
+
+  .user-form-button {
+    position: fixed;
+    top: 20px;
+    right: 120px; /* Adjust this value to position the button next to the cart button */
+    padding: 10px 20px;
+    background-color: #f1f1f1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1000;
+  }
+  
+  .user-form-popup {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    background-color: #f1f1f1;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1000;
+  }
+
+  .user-form-popup form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-form-popup input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .user-form-popup button {
+    padding: 10px;
+    background-color: #f1f1f1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .user-form-popup .close-user-form {
+    background-color: #e95f46;
+    margin-top: 10px;
+  }
