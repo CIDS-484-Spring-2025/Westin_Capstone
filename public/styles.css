@@ -17,14 +17,15 @@ body {
 }
 
 .item {
-    flex: 1 1 calc(25% - 20px);
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: #fff;
-    padding: 15px;
-    transition: transform 0.3s;
-    max-width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    width: calc(33.333% - 40px); /* Adjust this value based on the desired number of columns */
+    box-sizing: border-box;
 }
 
 .item:hover {
@@ -44,7 +45,7 @@ body {
 }
 
 .item p {
-    color: #bfc1d6;
+    color: black;
     margin: 5px 0;
 }
 
