@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
-const port = 3001;
+const port = 3002;
 const bodyParser = require('body-parser');
-const mysql = require('mysql2'); // Use mysql2 instead of mysql
+const mysql = require('mysql2'); 
 const path = require('path');
 
 // Connect to MySQL Database
