@@ -159,9 +159,9 @@ body {
   .user-form-button {
     position: fixed;
     top: 20px;
-    right: 120px; /* Adjust this value to position the button next to the cart button */
+    right: 400px; /* Adjust this value to position the button next to the cart button */
     padding: 10px 20px;
-    background-color: #f1f1f1;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -197,7 +197,7 @@ body {
   
   .user-form-popup button {
     padding: 10px;
-    background-color: #f1f1f1;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
