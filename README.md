@@ -37,4 +37,5 @@ Back End:
 - Added search functionality
 - Added cart functionality
 - Able to send data to the database
+- Link to milestone 2 youtube https://youtu.be/RKXTobAM2ts
   
