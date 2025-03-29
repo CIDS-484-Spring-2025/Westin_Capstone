@@ -1,81 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Items and Users</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items and Users</title>
+    <link rel="stylesheet" href="styles.css">
 
 </head>
 
 <body>
 
-<!-- Search Input -->
-<input type="text" id="searchInput" placeholder="Search for items...">
-<button id="searchButton">Search</button>
+    <!-- Search Input -->
+    <input type="text" id="searchInput" placeholder="Search for items...">
+    <button id="searchButton">Search</button>
 
-<h1 id='items list' style="
+    <h1 id='items list' style="
 color: #f03615;
 font-size: 38px;
 font-family: sans-serif;
 ">Available Items</h1>
 
-<div id="itemsGrid"></div>
+    <div id="itemsGrid"></div>
 
-<!-- User Form Pop-up -->
-<div id="userFormPopup" class="user-form-popup">
-  <form id="user-form">
-      <h3>Create User</h3>
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <button type="submit">Submit</button>
-      <button type="button" id="closeUserForm" class="close-user-form">Close</button>
-  </form>
-  <p id="user-feedback"></p>
-</div>
+    <!-- User Form Pop-up -->
+    <div id="userFormPopup" class="user-form-popup">
+        <form id="user-form">
+            <h3>Create User</h3>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <button type="submit">Submit</button>
+            <button type="button" id="closeUserForm" class="close-user-form">Close</button>
+        </form>
+        <p id="user-feedback"></p>
+    </div>
 
-<p id="user-feedback"></p>
+    <p id="user-feedback"></p>
 
-  <!-- Cart Button -->
-  <button id="cartButton" class="cart-button">Cart</button>
+    <!-- Cart Button -->
+    <button id="cartButton" class="cart-button">Cart</button>
 
-  <!-- Cart Sidebar -->
-  <div id="cartSidebar" class="cart-sidebar">
-      <h3>Your Cart</h3>
-      <ul id="cartItems" class="cart-items"></ul>
-      <button id="closeCart" class="close-cart">Close</button>
-  </div>
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <h3>Your Cart</h3>
+        <ul id="cartItems" class="cart-items"></ul>
+        <button id="closeCart" class="close-cart">Close</button>
+    </div>
 
-<script>
-  // Cart array to store selected items
-  let cart = [];
+    <script>
+        // Cart array to store selected items
+        let cart = [];
 
-  //user id for storing cart data
-  let currentUserId = null;
+        //user id for storing cart data
+        let currentUserId = null;
 
-  // Fetch items on page load
-  document.addEventListener('DOMContentLoaded', () => {
-          fetchItems();
-          showUserFormPopup();
-  });
+        // Fetch items on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchItems();
+            showUserFormPopup();
+        });
 
-  async function fetchItems() {
-    try {
-        const response = await fetch('/api/items');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const items = await response.json();
-        console.log('Items:', items); // Log the items
+        // Disaply all items from the database onto the webpage
+        async function fetchItems() {
+            try {
 
-        const itemsGrid = document.getElementById('itemsGrid');
-        itemsGrid.innerHTML = ''; // Clear previous items
+                const response = await fetch('/api/items');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const items = await response.json();
+                console.log('Items:', items); // Log the items
 
-        items.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item';
+                const itemsGrid = document.getElementById('itemsGrid');
+                itemsGrid.innerHTML = ''; // Clear previous items
 
-            itemDiv.innerHTML = `
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+
+                    //display items from the database
+                    itemDiv.innerHTML = `
                 <img src="${item.image_url}" alt="${item.item_name}" class="item-image">
                 <h3 class="item-name">${item.item_name}</h3>
                 <p class="item-description">${item.item_description}</p>
@@ -83,206 +87,208 @@ font-family: sans-serif;
                 <button class="add-to-cart" data-id="${item.item_id}" data-name="${item.item_name}" data-price="${item.price}" data-image="${item.image_url}">Add to Cart</button>
             `;
 
-            itemsGrid.appendChild(itemDiv);
-        });
+                    itemsGrid.appendChild(itemDiv);
+                });
 
-        // Add event listeners to "Add to Cart" buttons
-        document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', function () {
-                const itemId = this.getAttribute('data-id');
-                const itemName = this.getAttribute('data-name');
-                const itemPrice = parseFloat(this.getAttribute('data-price'));
-                const itemImage = this.getAttribute('data-image');
-                addToCart(itemId, itemName, itemPrice, itemImage);
-            });
-        });
+                // Add event listeners to "Add to Cart" buttons
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const itemId = this.getAttribute('data-id');
+                        const itemName = this.getAttribute('data-name');
+                        const itemPrice = parseFloat(this.getAttribute('data-price'));
+                        const itemImage = this.getAttribute('data-image');
+                        addToCart(itemId, itemName, itemPrice, itemImage);
+                    });
+                });
 
-      } catch (error) {
-        console.error('Error fetching items:', error);
-        document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
-      }
-  }
+            } catch (error) {
+                console.error('Error fetching items:', error);
+                document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
+            }
+        }
 
-  // Function to update the cart display in the sidebar
-  function updateCartUI() {
-      const cartList = document.getElementById('cartItems');
-      cartList.innerHTML = '';
+        // Function to update the cart display in the sidebar
+        function updateCartUI() {
+            const cartList = document.getElementById('cartItems');
+            cartList.innerHTML = '';
 
-      cart.forEach(item => {
-          const li = document.createElement('li');
-          li.innerHTML = `
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
               <img src="${item.image_url}" alt="${item.item_name}" style="width: 50px; height: 50px; border-radius: 5px; margin-right: 10px;">
               <strong>${item.item_name}</strong> - $${parseFloat(item.price).toFixed(2)} (x${item.quantity})
               <button class="remove-from-cart" data-id="${item.item_id}">Remove</button>
           `;
-          cartList.appendChild(li);
-      });
-
-      // Add event listeners to the remove buttons
-      document.querySelectorAll('.remove-from-cart').forEach(button => {
-            button.addEventListener('click', async function () {
-                const itemId = this.getAttribute('data-id');
-                await removeFromCart(itemId);
+                cartList.appendChild(li);
             });
-        });
-    }
 
-  // Function to add items to the users cart
-  async function addToCart(item_id, item_name, price, image_url) {
-      const existingItem = cart.find(item => item.id === item_id);
-      if (existingItem) {
-          existingItem.quantity += 1; // Increase quantity if item already in cart
-      } else {
-          cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
-      }
-      updateCartUI();
-
-      // Store cart item in the database
-      if (currentUserId) {
-          try {
-            const response = await fetch('/api/Cart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUserId, itemId: item_id })
-            });
-            if (!response.ok) {
-                throw new Error('Failed to add item to cart in the database.');
-            }
-        } catch (error) {
-            console.error('Error adding item to cart in the database:', error);
-        }
-      }
-
-      alert(`${item_name} added to cart!`); // Popup confirmation
-  }
-
-    // Function to remove items from the user's cart
-    async function removeFromCart(item_id) {
-        cart = cart.filter(item => item.item_id !== item_id);
-        updateCartUI();
-
-        // Remove cart item from the database
-        if (currentUserId) {
-            try {
-                const response = await fetch('/api/cart', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: currentUserId, itemId: item_id })
+            // Add event listeners to the remove buttons
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const itemId = this.getAttribute('data-id');
+                    await removeFromCart(itemId);
                 });
-                if (!response.ok) {
-                    throw new Error('Failed to remove item from cart in the database.');
+            });
+        }
+
+        // Function to add items to the users cart
+        async function addToCart(item_id, item_name, price, image_url) {
+            const existingItem = cart.find(item => item.id === item_id);
+            if (existingItem) {
+                existingItem.quantity += 1; // Increase quantity if item already in cart
+            } else {
+                cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
+            }
+            updateCartUI();
+
+            // Store cart item in the database
+            if (currentUserId) {
+                try {
+                    const response = await fetch('/api/Cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUserId, itemId: item_id })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to add item to cart in the database.');
+                    }
+                } catch (error) {
+                    console.error('Error adding item to cart in the database:', error);
+                }
+            }
+
+            alert(`${item_name} added to cart!`); // Popup confirmation
+        }
+
+        // Function to remove items from the user's cart
+        async function removeFromCart(item_id) {
+            cart = cart.filter(item => item.item_id !== item_id);
+            updateCartUI();
+
+            // Remove cart item from the database
+            if (currentUserId) {
+                try {
+                    const response = await fetch('/api/cart', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUserId, itemId: item_id })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to remove item from cart in the database.');
+                    }
+                } catch (error) {
+                    console.error('Error removing item from cart in the database:', error);
+                }
+            }
+        }
+
+
+        // Initialize the items display on page load
+        window.onload = fetchItems;
+
+        // Handle user form submission
+        document.getElementById('user-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUserId = data.userId; // Ensure currentUserId is set correctly
+                    document.getElementById('user-feedback').textContent = 'User created successfully!';
+                    fetchItems();
+                    fetchCart();
+                    closeUserFormPopup(); // Close the popup
+                    // Close the popup
+                } else {
+                    const data = await response.json();
+                    document.getElementById('user-feedback').textContent = data.message || data.error;
                 }
             } catch (error) {
-                console.error('Error removing item from cart in the database:', error);
+                console.error('Error creating user:', error);
             }
-        }
-    }
+        });
 
 
-    // Initialize the items display on page load
-    window.onload = fetchItems;
-
-    // Handle user form submission
-    document.getElementById('user-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-
-        try {
-            const response = await fetch('/api/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email })
+        // Attach event listeners
+        function attachEventListeners() {
+            // Toggle user form pop-up
+            document.getElementById('userFormButton').addEventListener('click', function () {
+                document.getElementById('userFormPopup').style.display = 'block';
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                currentUserId = data.userId; // Ensure currentUserId is set correctly
-                document.getElementById('user-feedback').textContent = 'User created successfully!';
-                fetchItems();
-                fetchCart();
-                closeUserFormPopup(); // Close the popup
-                // Close the popup
-            } else {
-                const data = await response.json();
-                document.getElementById('user-feedback').textContent = data.message || data.error;
-            }
-        } catch (error) {
-            console.error('Error creating user:', error);
+            document.getElementById('closeUserForm').addEventListener('click', function () {
+                closeUserFormPopup();
+            });
+
+            // Toggle cart sidebar
+            document.getElementById('cartButton').addEventListener('click', function () {
+                document.getElementById('cartSidebar').style.right = '0';
+            });
+
+            document.getElementById('closeCart').addEventListener('click', function () {
+                document.getElementById('cartSidebar').style.right = '-300px';
+            });
+
+            // Add event listener to search button
+            document.getElementById('searchButton').addEventListener('click', searchItems);
         }
-    }); 
 
-    
-    // Attach event listeners
-    function attachEventListeners() {
-        // Toggle user form pop-up
-        document.getElementById('userFormButton').addEventListener('click', function () {
+        // Show user form popup on page load
+        function showUserFormPopup() {
             document.getElementById('userFormPopup').style.display = 'block';
-        });
+        }
 
-        document.getElementById('closeUserForm').addEventListener('click', function () {
-            closeUserFormPopup();
-        });
+        // Close user form popup
+        function closeUserFormPopup() {
+            document.getElementById('userFormPopup').style.display = 'none';
+        }
 
-        // Toggle cart sidebar
-        document.getElementById('cartButton').addEventListener('click', function () {
-            document.getElementById('cartSidebar').style.right = '0';
-        });
+        // Fetch cart items
+        async function fetchCart() {
+            if (!currentUserId) return;
 
-        document.getElementById('closeCart').addEventListener('click', function () {
-            document.getElementById('cartSidebar').style.right = '-300px';
-        });
+            try {
+                const response = await fetch(`/api/cart/${currentUserId}`);
+                const cartItems = await response.json();
 
-        // Add event listener to search button
-        document.getElementById('searchButton').addEventListener('click', searchItems);
-    }
+                cart = cartItems; // Update the cart array with items from the database
+                updateCartUI();
+            } catch (error) {
+                console.error('Error fetching cart:', error);
+            }
+        }
 
-    // Show user form popup on page load
-    function showUserFormPopup() {
-        document.getElementById('userFormPopup').style.display = 'block';
-    }
+        // Search items
+        async function searchItems() {
+            const searchTerm = document.getElementById('searchInput').value;
+            console.log('Search term:', searchTerm); // Log the search term
+            try {
+                //error handling
+                const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const items = await response.json();
+                console.log('Search results:', items); // Log the search results
 
-    // Close user form popup
-    function closeUserFormPopup() {
-        document.getElementById('userFormPopup').style.display = 'none';
-    }
+                const itemsGrid = document.getElementById('itemsGrid');
+                itemsGrid.innerHTML = ''; // Clear previous items
 
-    // Fetch cart items
-    async function fetchCart() {
-      if (!currentUserId) return;
+                //display items from searcgh results
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
 
-      try {
-        const response = await fetch(`/api/cart/${currentUserId}`);
-        const cartItems = await response.json();
-
-        cart = cartItems; // Update the cart array with items from the database
-        updateCartUI();
-      } catch (error) {
-        console.error('Error fetching cart:', error);
-      }
-    }
-
-    // Search items
-  async function searchItems() {
-    const searchTerm = document.getElementById('searchInput').value;
-    console.log('Search term:', searchTerm); // Log the search term
-    try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const items = await response.json();
-      console.log('Search results:', items); // Log the search results
-
-      const itemsGrid = document.getElementById('itemsGrid');
-      itemsGrid.innerHTML = ''; // Clear previous items
-
-      items.forEach(item => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'item';
-
-        itemDiv.innerHTML = `
+                    itemDiv.innerHTML = `
           <img src="${item.image_url}" alt="${item.item_name}" class="item-image">
           <h3 class="item-name">${item.item_name}</h3>
           <p class="item-description">${item.item_description}</p>
@@ -290,28 +296,29 @@ font-family: sans-serif;
           <button onclick="addToCart(${item.item_id}, '${item.item_name}', ${parseFloat(item.price)}, '${item.image_url}')">Add to Cart</button>
         `;
 
-        itemsGrid.appendChild(itemDiv);
-      });
+                    itemsGrid.appendChild(itemDiv);
+                });
 
-    } catch (error) {
-        console.error('Error searching items:', error);
-        document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
-      }
-  }
+            } catch (error) {
+                console.error('Error searching items:', error);
+                document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
+            }
+        }
 
-    // Open Cart Sidebar
-    document.getElementById('cartButton').addEventListener('click', () => {
-      document.getElementById('cartSidebar').style.right = '0';
-    });
+        // Open Cart Sidebar
+        document.getElementById('cartButton').addEventListener('click', () => {
+            document.getElementById('cartSidebar').style.right = '0';
+        });
 
-    // Close Cart Sidebar
-    document.getElementById('closeCart').addEventListener('click', () => {
-      document.getElementById('cartSidebar').style.right = '-300px';
-    });
+        // Close Cart Sidebar
+        document.getElementById('closeCart').addEventListener('click', () => {
+            document.getElementById('cartSidebar').style.right = '-300px';
+        });
 
-    // Search Button Click
-    document.getElementById('searchButton').addEventListener('click', searchItems);
+        // Search Button Click
+        document.getElementById('searchButton').addEventListener('click', searchItems);
 
-</script>
+    </script>
 </body>
+
 </html>

@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3002;
 const bodyParser = require('body-parser');
-const mysql = require('mysql2'); 
+const mysql = require('mysql2');
 const path = require('path');
 
 // Connect to MySQL Database
@@ -73,8 +73,8 @@ app.get('/api/search', (req, res) => {
 });
 
 
-  // Check if the item already exists in the cart
-  // Add item to cart endpoint
+// Check if the item already exists in the cart
+// Add item to cart endpoint
 app.post('/api/cart', (req, res) => {
   const { userId, itemId } = req.body;
   const checkCartQuery = 'SELECT * FROM cart WHERE user_id = ? AND item_id = ?';
