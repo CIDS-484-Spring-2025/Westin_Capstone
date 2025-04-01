@@ -269,39 +269,56 @@ font-family: sans-serif;
 
         // Search items
         async function searchItems() {
-            const searchTerm = document.getElementById('searchInput').value;
+            const searchTerm = document.getElementById('searchInput').value; // Normalize input
             console.log('Search term:', searchTerm); // Log the search term
+
             try {
-                //error handling
                 const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
                 const items = await response.json();
                 console.log('Search results:', items); // Log the search results
 
                 const itemsGrid = document.getElementById('itemsGrid');
                 itemsGrid.innerHTML = ''; // Clear previous items
 
-                //display items from searcgh results
+                // Display items from search results
+                if (items.length === 0) {
+                    itemsGrid.innerHTML = '<p>No items found.</p>';
+                    return;
+                }
+
                 items.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'item';
 
                     itemDiv.innerHTML = `
-          <img src="${item.image_url}" alt="${item.item_name}" class="item-image">
-          <h3 class="item-name">${item.item_name}</h3>
-          <p class="item-description">${item.item_description}</p>
-          <p class="item-price">$${parseFloat(item.price).toFixed(2)}</p>
-          <button onclick="addToCart(${item.item_id}, '${item.item_name}', ${parseFloat(item.price)}, '${item.image_url}')">Add to Cart</button>
-        `;
+                <img src="${item.image_url}" alt="${item.item_name}" class="item-image">
+                <h3 class="item-name">${item.item_name}</h3>
+                <p class="item-description">${item.item_description}</p>
+                <p class="item-price">$${parseFloat(item.price).toFixed(2)}</p>
+                <button class="add-to-cart" data-id="${item.item_id}" data-name="${item.item_name}" data-price="${item.price}" data-image="${item.image_url}">Add to Cart</button>
+            `;
 
                     itemsGrid.appendChild(itemDiv);
                 });
 
+                // Add event listeners to "Add to Cart" buttons
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const itemId = this.getAttribute('data-id');
+                        const itemName = this.getAttribute('data-name');
+                        const itemPrice = parseFloat(this.getAttribute('data-price'));
+                        const itemImage = this.getAttribute('data-image');
+                        addToCart(itemId, itemName, itemPrice, itemImage);
+                    });
+                });
+
             } catch (error) {
                 console.error('Error searching items:', error);
-                document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
+                document.getElementById('itemsGrid').innerHTML = '<p>Failed to load search results.</p>';
             }
         }
 
