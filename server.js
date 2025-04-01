@@ -57,17 +57,20 @@ app.get('/api/items', (req, res) => {
 // Search items
 app.get('/api/search', (req, res) => {
   const searchTerm = req.query.q;
-  console.log('Search term:', searchTerm); // Log the search term
-  const query = `
+
+  // Query to search for items by name or tag
+  const searchQuery = `
     SELECT * FROM items
-    WHERE item_name LIKE ?
+    WHERE item_name LIKE ? OR tags LIKE ?
   `;
-  connection.query(query, [`%${searchTerm}%`], (err, results) => {
+
+  const searchValue = `%${searchTerm}%`; // Add wildcards for partial matching
+  connection.query(searchQuery, [searchValue, searchValue], (err, results) => {
     if (err) {
       console.error('Error searching items:', err);
-      return res.status(500).json({ error: 'Database error.', details: err.message });
+      return res.status(500).json({ error: 'Database error.' });
     }
-    console.log('Search results:', results); // Log the search results
+
     res.json(results);
   });
 });
