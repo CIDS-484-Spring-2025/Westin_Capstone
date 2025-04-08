@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const path = require('path');
 
+const cors = require('cors');
+app.use(cors());
+
 // Connect to MySQL Database
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -72,6 +75,25 @@ app.get('/api/search', (req, res) => {
     }
 
     res.json(results);
+  });
+});
+
+//Fetch item details by ID
+app.get('/api/items/:id', (req, res) => {
+  const itemId = req.params.id;
+
+  const query = 'SELECT * FROM items WHERE item_id = ?';
+  connection.query(query, [itemId], (err, results) => {
+    if (err) {
+      console.error('Error fetching item details:', err);
+      return res.status(500).json({ error: 'Database error.' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Item not found.' });
+    }
+
+    res.json(results[0]);
   });
 });
 

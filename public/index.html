@@ -76,7 +76,8 @@ font-family: sans-serif;
 
                 items.forEach(item => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.className = 'item';
+                    itemDiv.classList.add('item');
+
 
                     //display items from the database
                     itemDiv.innerHTML = `
@@ -84,8 +85,13 @@ font-family: sans-serif;
                 <h3 class="item-name">${item.item_name}</h3>
                 <p class="item-description">${item.item_description}</p>
                 <p class="item-price">$${parseFloat(item.price).toFixed(2)}</p>
+                <button class="view-details" data-id="${item.item_id}">View Details</button>
                 <button class="add-to-cart" data-id="${item.item_id}" data-name="${item.item_name}" data-price="${item.price}" data-image="${item.image_url}">Add to Cart</button>
             `;
+
+                    itemDiv.querySelector('.view-details').addEventListener('click', () => {
+                        navigateToItem(item.item_id);
+                    });
 
                     itemsGrid.appendChild(itemDiv);
                 });
@@ -105,6 +111,23 @@ font-family: sans-serif;
                 console.error('Error fetching items:', error);
                 document.getElementById('itemsGrid').innerHTML = '<p>Failed to load items.</p>';
             }
+        }
+
+
+        // Function to navigate to the item details page
+        function navigateToItem(itemId) {
+            console.log('Navigating to item details for ID:', itemId); // Debugging
+
+            if (!itemId) {
+                console.error('Item ID is missing.');
+                return;
+            }
+
+            // Save the item ID in local storage
+            localStorage.setItem('selectedItemId', itemId);
+
+            // Navigate to the item details page
+            window.location.href = 'item.html';
         }
 
         // Function to update the cart display in the sidebar
@@ -321,6 +344,7 @@ font-family: sans-serif;
                 document.getElementById('itemsGrid').innerHTML = '<p>Failed to load search results.</p>';
             }
         }
+
 
         // Open Cart Sidebar
         document.getElementById('cartButton').addEventListener('click', () => {
