@@ -96,6 +96,10 @@
                 cartList.appendChild(li);
             });
 
+            // Update the cart counter
+            const cartCount = document.getElementById('cartCount');
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+
             // Add event listeners to the remove buttons
             document.querySelectorAll('.remove-from-cart').forEach(button => {
                 button.addEventListener('click', async function () {
@@ -114,6 +118,7 @@
                 cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
             }
             console.log('Cart after adding item:', cart); // Debugging log
+
             updateCartUI();
 
             // Store cart item in the database
@@ -124,6 +129,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId: currentUserId, itemId: item_id })
                     });
+                    
                     if (!response.ok) {
                         throw new Error('Failed to add item to cart in the database.');
                     }
