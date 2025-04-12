@@ -90,7 +90,7 @@
                 const li = document.createElement('li');
                 li.innerHTML = `
               <img src="${item.image_url}" alt="${item.item_name}" style="width: 50px; height: 50px; border-radius: 5px; margin-right: 10px;">
-              <strong>${item.item_name}</strong> - $${parseFloat(item.price).toFixed(2)} (x${item.quantity})
+              <strong>${item.item_name}</strong>  $${parseFloat(item.price).toFixed(2)} (x${item.quantity})
               <button class="remove-from-cart" data-id="${item.item_id}">Remove</button>
           `;
                 cartList.appendChild(li);
@@ -113,6 +113,7 @@
             } else {
                 cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
             }
+            console.log('Cart after adding item:', cart); // Debugging log
             updateCartUI();
 
             // Store cart item in the database
@@ -154,10 +155,18 @@
                 const result = await response.json();
                 console.log('Item removed from cart:', result);
         
+                // Debugging: Log the cart before filtering
+                console.log('Cart before filtering:', cart);
+        
+                // Update the cart array
+                console.log('Cart before filtering:', cart);
+                cart = cart.filter(item => item.item_id !== itemId);
+        
+                // Debugging: Log the updated cart
+                console.log('Updated cart:', cart);
+        
                 // Update the cart UI
-                cart = cart.filter(item => item.item_id !== parseInt(itemId));
                 updateCartUI();
-                
             } catch (error) {
                 console.error('Error removing item from cart in the database:', error);
             }
