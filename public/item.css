@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: white;
+    background-color: #84bcdaff;
     text-align: center;
 }
 
@@ -39,22 +39,21 @@ body {
     text-align: center; 
     margin-right: 50px;
     margine-top: 50px;
-    max-width: 200px
-    word-wrap: break-word;
+    max-width: 200px;
 }
 
 /* Style for the item name */
 .item-name {
     font-size: 1.5rem;
     margin: 0 0 10px 0;
-    color: black;
+    color: #2f1847ff;;
     text-align: center;
 }
 
 /* Style for the item description */
 .item-description {
     font-size: 1rem;
-    color: black;
+    color: #2f1847ff;
     margin: 0 0 20px 0;
     line-height: 1.5;
     text-align: center;
@@ -65,5 +64,5 @@ body {
 .item-price {
     font-size: 1.5rem;
     font-weight: bold;
-    color: black;
+    color: #f4e04dff;
 }

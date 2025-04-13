@@ -38,4 +38,10 @@ Back End:
 - Added cart functionality
 - Able to send data to the database
 - Link to milestone 2 youtube https://youtu.be/RKXTobAM2ts
+
+### Milestone 3
+- Added item tags for more efficient searching
+- Added item details page
+- Added a new table; cart_items for better logic handling
+
   

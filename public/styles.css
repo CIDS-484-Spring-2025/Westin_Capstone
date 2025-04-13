@@ -4,7 +4,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #a7a6b9;
+    background-color: #84bcdaff;
     text-align: center;
 }
 
@@ -50,7 +50,7 @@ body {
 }
 
 .item button {
-    background-color: #949be8;
+    background-color: #9f7e69ff;
     color: white;
     border: none;
     padding: 10px;
@@ -61,7 +61,8 @@ body {
 }
 
 .item button:hover {
-    background-color: #949be8;
+    background-color: #f4e04dff;
+    color: #2f1847ff;
 }
 
  #search-container {
@@ -92,15 +93,15 @@ body {
     padding: 10px;
     border: 1px solid #ccc;
     border-left: none;
-    background-color: #f03615;
-    color: white;
+    background-color: #f4e04dff;
+    color: #2f1847ff;
     border-radius: 0 5px 5px 0;
     cursor: pointer;
     z-index: 1000;
   }
   
   #searchButton:hover {
-    background-color: #f03615;
+    background-color: #f4e04dff;
   }
 
   .cart-button {
@@ -108,13 +109,24 @@ body {
     top: 20px;
     right: 20px;
     padding: 10px 20px;
-    background-color: #f03615;
-    color: white;
+    background-color: #f4e04dff;
+    color: #2f1847ff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     z-index: 1000;
+  }
+
+  .cart-counter {
+    font-size: 12px;
+    background: #84bcdaff;
+    border-radius: 10px;
+    color: #fff;
+    padding: 2px 6px;
+    margin: -10px 0 0 0;
+    vertical-align: top;
+    text-decoration: none;
   }
   
   .cart-sidebar {
@@ -123,12 +135,13 @@ body {
     right: -300px;
     width: 300px;
     height: 100%;
-    background-color: #f1f1f1;
+    background-color: #84bcdaff;
     box-shadow: -2px 0 5px rgba(0,0,0,0.3);
     transition: right 0.3s ease;
     padding: 20px;
     box-sizing: border-box;
     z-index: 999;
+    color: #2f1847ff;
   }
   
   .cart-items {
@@ -139,7 +152,7 @@ body {
   .close-cart {
     margin-top: 20px;
     padding: 10px;
-    background-color: #e95f46;
+    background-color: #9f7e69ff;
     color: #f1f1f1;
     border: none;
     border-radius: 5px;
@@ -176,11 +189,12 @@ body {
     top: 60px;
     right: 300px;
     width: 800px;
-    background-color: #949be8;
+    background-color: #9f7e69ff;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
     padding: 20px;
     border-radius: 5px;
     z-index: 1000;
+    color: white;
   }
 
   .user-form-popup form {
@@ -208,3 +222,20 @@ body {
     background-color: #e95f46;
     margin-top: 10px;
   }
+
+
+  //colors
+
+  /* CSS HEX */
+--bright-green: #5aff15ff;
+--chrysler-blue: #5603adff;
+--dark-green: #002e2cff;
+--pacific-cyan: #06aed5ff;
+--jonquil: #f0c808ff;
+
+/* CSS HEX */
+--maize: #f4e04dff;
+--beaver: #9f7e69ff;
+--carolina-blue: #84bcdaff;
+--black-olive: #3b413cff;
+--russian-violet: #2f1847ff;
