@@ -1,4 +1,3 @@
-
         // Cart array to store selected items
         let cart = [];
 
@@ -111,11 +110,11 @@
 
         // Function to add items to the users cart
         async function addToCart(item_id, item_name, price, image_url) {
-            const existingItem = cart.find(item => item.id === item_id);
+            const existingItem = cart.find(item => item.item_id === item_id);
             if (existingItem) {
                 existingItem.quantity += 1; // Increase quantity if item already in cart
             } else {
-                cart.push({ item_id, item_name: name, price, image_url, quantity: 1 });
+                cart.push({ item_id, item_name, price, image_url, quantity: 1 });
             }
             console.log('Cart after adding item:', cart); // Debugging log
 
@@ -131,10 +130,18 @@
                     });
                     
                     if (!response.ok) {
-                        throw new Error('Failed to add item to cart in the database.');
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to add item to cart in the database.');
                     }
+                    
+                    const result = await response.json();
+                    console.log('Item added to cart in database:', result);
                 } catch (error) {
                     console.error('Error adding item to cart in the database:', error);
+                    alert('Failed to add item to cart. Please try again.');
+                    // Remove the item from the local cart if database update failed
+                    cart = cart.filter(item => item.item_id !== item_id);
+                    updateCartUI();
                 }
             }
 
@@ -142,39 +149,46 @@
         }
 
         // Function to remove items from the users cart
-        async function removeFromCart(itemId) {
-            try {
-                console.log('Removing item with ID:', itemId); // Debugging log
-        
-                const response = await fetch(`/api/cart_items`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: currentUserId, itemId })
-                });
-        
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('Backend error:', errorData);
-                    throw new Error('Failed to remove item from cart in the database.');
+        async function removeFromCart(item_id) {
+            const itemIndex = cart.findIndex(item => item.item_id === item_id);
+            if (itemIndex === -1) return;
+
+            const item = cart[itemIndex];
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+            } else {
+                cart.splice(itemIndex, 1);
+            }
+
+            updateCartUI();
+
+            // Remove item from the database
+            if (currentUserId) {
+                try {
+                    const response = await fetch('/api/cart_items', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUserId, itemId: item_id })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to remove item from cart in the database.');
+                    }
+
+                    const result = await response.json();
+                    console.log('Item removed from cart in database:', result);
+                } catch (error) {
+                    console.error('Error removing item from cart in the database:', error);
+                    alert('Failed to remove item from cart. Please try again.');
+                    // Revert the local cart state if database update failed
+                    if (item.quantity > 1) {
+                        item.quantity += 1;
+                    } else {
+                        cart.splice(itemIndex, 0, item);
+                    }
+                    updateCartUI();
                 }
-        
-                const result = await response.json();
-                console.log('Item removed from cart:', result);
-        
-                // Debugging: Log the cart before filtering
-                console.log('Cart before filtering:', cart);
-        
-                // Update the cart array
-                console.log('Cart before filtering:', cart);
-                cart = cart.filter(item => item.item_id !== itemId);
-        
-                // Debugging: Log the updated cart
-                console.log('Updated cart:', cart);
-        
-                // Update the cart UI
-                updateCartUI();
-            } catch (error) {
-                console.error('Error removing item from cart in the database:', error);
             }
         }
 

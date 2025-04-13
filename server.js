@@ -8,21 +8,68 @@ const path = require('path');
 const cors = require('cors');
 app.use(cors());
 
-// Connect to MySQL Database
-const connection = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,
-  user: 'root', // Use your MySQL username
-  password: 'W6BjjngNf', // Use your MySQL password
-  database: 'webpage'
-});
+// Connect to MySQL Database with retry
+function connectWithRetry(attempt = 1) {
+  const dbConfig = {
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'W6BjjngNf',
+    database: 'webpage'
+  };
+  
+  console.log('Attempting to connect to local MySQL database with config:', {
+    ...dbConfig,
+    password: '********' // Don't log the actual password
+  });
 
-connection.connect(err => {
-  if (err) {
-    console.error('Database connection failed: ' + err.stack);
-    return;
+  const connection = mysql.createConnection(dbConfig);
+
+  // Add connection state logging
+  connection.on('connect', () => {
+    console.log('Database connection established');
+  });
+
+  connection.on('end', () => {
+    console.log('Database connection ended');
+  });
+
+  connection.on('error', (err) => {
+    console.error('Database connection error:', err);
+  });
+
+  connection.connect((err) => {
+    if (err) {
+      console.error(`Error connecting to the database (attempt ${attempt}):`, err);
+      if (attempt < 5) {
+        console.log(`Retrying in 5 seconds... (${attempt}/5)`);
+        setTimeout(() => connectWithRetry(attempt + 1), 5000);
+      } else {
+        console.error('Max retries reached. Could not connect to database.');
+      }
+      return;
+    }
+    console.log('Successfully connected to database:', dbConfig.database);
+  });
+
+  return connection;
+}
+
+const connection = connectWithRetry();
+
+// Add error handler for database connection
+connection.on('error', (err) => {
+  console.error('Database error:', err);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+    console.error('Database connection was closed. Attempting to reconnect...');
+    connection = connectWithRetry();
   }
-  console.log('Connected to database.');
+  if (err.code === 'ER_CON_COUNT_ERROR') {
+    console.error('Database has too many connections.');
+  }
+  if (err.code === 'ECONNREFUSED') {
+    console.error('Database connection was refused.');
+  }
 });
 
 // Parse JSON bodies
@@ -31,13 +78,28 @@ app.use(express.json());
 // Create a new user
 app.post('/api/users', (req, res) => {
   const { username, email } = req.body;
-  const query = 'INSERT INTO users (username, email) VALUES (?, ?)';
+  console.log('Creating new user:', { username, email });
+  
+  // Check connection state before query
+  if (connection.state === 'disconnected') {
+    console.log('Connection is disconnected, attempting to reconnect...');
+    connection = connectWithRetry();
+  }
+  
+  const query = 'INSERT INTO webpage.Users (username, email) VALUES (?, ?)';
+  console.log('Executing query:', query, 'with values:', [username, email]);
+  
   connection.query(query, [username, email], (err, results) => {
     if (err) {
       console.error('Error creating user:', err);
-      return res.status(500).json({ error: 'Database error.' });
+      if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+        console.log('Connection lost, attempting to reconnect...');
+        connection = connectWithRetry();
+      }
+      return res.status(500).json({ error: 'Database error: ' + err.message });
     }
     const userId = results.insertId;
+    console.log('Successfully created user with ID:', userId);
     res.json({ userId: results.insertId });
   });
 });
@@ -47,12 +109,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Fetch items
 app.get('/api/items', (req, res) => {
-  const query = 'SELECT * FROM items';
+  console.log('Fetching items from database...');
+  const query = 'SELECT * FROM webpage.Items';
   connection.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching items:', err);
-      return res.status(500).json({ error: 'Database error.' });
+      return res.status(500).json({ error: 'Database error: ' + err.message });
     }
+    console.log(`Successfully fetched ${results.length} items`);
     res.json(results);
   });
 });
@@ -63,7 +127,7 @@ app.get('/api/search', (req, res) => {
 
   // Query to search for items by name or tag
   const searchQuery = `
-    SELECT * FROM items
+    SELECT * FROM webpage.Items
     WHERE item_name LIKE ? OR tags LIKE ?
   `;
 
@@ -71,7 +135,7 @@ app.get('/api/search', (req, res) => {
   connection.query(searchQuery, [searchValue, searchValue], (err, results) => {
     if (err) {
       console.error('Error searching items:', err);
-      return res.status(500).json({ error: 'Database error.' });
+      return res.status(500).json({ error: 'Database error: ' + err.message });
     }
 
     res.json(results);
@@ -82,11 +146,11 @@ app.get('/api/search', (req, res) => {
 app.get('/api/items/:id', (req, res) => {
   const itemId = req.params.id;
 
-  const query = 'SELECT * FROM items WHERE item_id = ?';
+  const query = 'SELECT * FROM webpage.Items WHERE item_id = ?';
   connection.query(query, [itemId], (err, results) => {
     if (err) {
       console.error('Error fetching item details:', err);
-      return res.status(500).json({ error: 'Database error.' });
+      return res.status(500).json({ error: 'Database error: ' + err.message });
     }
 
     if (results.length === 0) {
@@ -98,104 +162,113 @@ app.get('/api/items/:id', (req, res) => {
 });
 
 
-/* Check if the item already exists in the cart
-   Add item to cart endpoint 
-app.post('/api/cart', (req, res) => {
-  const { userId, itemId } = req.body;
-  const checkCartQuery = 'SELECT * FROM cart WHERE user_id = ? AND item_id = ?';
-  connection.query(checkCartQuery, [userId, itemId], (err, results) => {
-    if (err) {
-      console.error('Error checking cart:', err);
-      return res.status(500).json({ error: 'Database error.' });
-    }
-
-    if (results.length > 0) {
-      // Item exists, increment the quantity
-      const updateQuery = 'UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND item_id = ?';
-      connection.query(updateQuery, [userId, itemId], (err, results) => {
-        if (err) {
-          console.error('Error updating cart:', err);
-          return res.status(500).json({ error: 'Database error.' });
-        }
-        res.json({ message: 'Item quantity updated in cart.' });
-      });
-    } else {
-      // Item does not exist, add a new entry
-      const insertQuery = 'INSERT INTO cart (user_id, item_id, quantity) VALUES (?, ?, 1)';
-      connection.query(insertQuery, [userId, itemId], (err, results) => {
-        if (err) {
-          console.error('Error adding to cart:', err);
-          return res.status(500).json({ error: 'Database error.' });
-        }
-        res.json({ message: 'Item added to cart.' });
-      });
-    }
-  });
-});  */
-
 // Add item to cart
 app.post('/api/add-to-cart', (req, res) => {
   const { userId, itemId } = req.body;
+  console.log('Received add-to-cart request:', { userId, itemId });
 
-  // Step 1: Check if the user already has a cart
-  const getCartQuery = 'SELECT cart_id FROM cart WHERE user_id = ?';
-  connection.query(getCartQuery, [userId], (err, results) => {
+  // First, check if the user exists
+  const checkUserQuery = 'SELECT user_id FROM webpage.Users WHERE user_id = ?';
+  console.log('Checking user existence with query:', checkUserQuery, 'and userId:', userId);
+  
+  connection.query(checkUserQuery, [userId], (err, userResults) => {
     if (err) {
-      console.error('Error fetching cart:', err);
-      return res.status(500).json({ error: 'Database error.' });
+      console.error('Error checking user:', err);
+      return res.status(500).json({ error: 'Database error checking user: ' + err.message });
     }
 
-    let cartId;
+    console.log('User check results:', userResults);
 
-    if (results.length > 0) {
-      // Cart exists, get the cart_id
-      cartId = results[0].cart_id;
-    } else {
-      // No cart exists, create a new cart
-      const createCartQuery = 'INSERT INTO cart (user_id) VALUES (?)';
-      connection.query(createCartQuery, [userId], (err, results) => {
-        if (err) {
-          console.error('Error creating cart:', err);
-          return res.status(500).json({ error: 'Database error.' });
-        }
-        cartId = results.insertId; // Get the newly created cart_id
-        addItemToCart(cartId, itemId, res); // Proceed to add the item
-      });
-      return;
+    if (userResults.length === 0) {
+      console.error('User not found:', userId);
+      return res.status(404).json({ error: 'User not found. Please log in again.' });
     }
 
-    // Step 2: Add the item to the cart
-    addItemToCart(cartId, itemId, res);
+    // User exists, now check if cart exists
+    const checkCartQuery = 'SELECT cart_id FROM webpage.cart WHERE user_id = ?';
+    console.log('Checking cart existence with query:', checkCartQuery, 'and userId:', userId);
+    
+    connection.query(checkCartQuery, [userId], (err, cartResults) => {
+      if (err) {
+        console.error('Error checking cart:', err);
+        return res.status(500).json({ error: 'Database error checking cart: ' + err.message });
+      }
+
+      console.log('Cart check results:', cartResults);
+
+      let cartId;
+      if (cartResults.length === 0) {
+        // Create a new cart if it doesn't exist
+        const createCartQuery = 'INSERT INTO webpage.cart (user_id) VALUES (?)';
+        console.log('Creating new cart with query:', createCartQuery, 'and userId:', userId);
+        
+        connection.query(createCartQuery, [userId], (err, result) => {
+          if (err) {
+            console.error('Error creating cart:', err);
+            return res.status(500).json({ error: 'Database error creating cart: ' + err.message });
+          }
+          cartId = result.insertId;
+          console.log('Created new cart with ID:', cartId);
+          
+          // Now that we have a cart, add the item
+          addItemToCart(cartId, itemId, res);
+        });
+      } else {
+        cartId = cartResults[0].cart_id;
+        console.log('Found existing cart with ID:', cartId);
+        
+        // Add the item to the existing cart
+        addItemToCart(cartId, itemId, res);
+      }
+    });
   });
 });
 
 // Helper function to add an item to the cart
 function addItemToCart(cartId, itemId, res) {
-  const checkItemQuery = 'SELECT * FROM cart_items WHERE cart_id = ? AND item_id = ?';
+  if (!cartId) {
+    console.error('No cart ID provided');
+    return res.status(500).json({ error: 'No cart ID available' });
+  }
+
+  console.log('Adding item to cart:', { cartId, itemId });
+  
+  // First check if the item exists in the cart
+  const checkItemQuery = 'SELECT * FROM webpage.cart_items WHERE cart_id = ? AND item_id = ?';
+  console.log('Checking if item exists in cart with query:', checkItemQuery, 'and values:', [cartId, itemId]);
+  
   connection.query(checkItemQuery, [cartId, itemId], (err, results) => {
     if (err) {
       console.error('Error checking cart items:', err);
-      return res.status(500).json({ error: 'Database error.' });
+      return res.status(500).json({ error: 'Database error checking cart items: ' + err.message });
     }
 
+    console.log('Item check results:', results);
+
     if (results.length > 0) {
-      // Item exists, increment the quantity
-      const updateQuery = 'UPDATE cart_items SET quantity = quantity + 1 WHERE cart_id = ? AND item_id = ?';
-      connection.query(updateQuery, [cartId, itemId], (err, results) => {
+      // Item exists, increment quantity
+      const updateQuery = 'UPDATE webpage.cart_items SET quantity = quantity + 1 WHERE cart_id = ? AND item_id = ?';
+      console.log('Updating item quantity with query:', updateQuery, 'and values:', [cartId, itemId]);
+      
+      connection.query(updateQuery, [cartId, itemId], (err) => {
         if (err) {
           console.error('Error updating cart item:', err);
-          return res.status(500).json({ error: 'Database error.' });
+          return res.status(500).json({ error: 'Database error updating cart item: ' + err.message });
         }
+        console.log('Successfully updated item quantity');
         res.json({ message: 'Item quantity updated in cart.' });
       });
     } else {
-      // Item does not exist, add a new entry
-      const insertQuery = 'INSERT INTO cart_items (cart_id, item_id, quantity) VALUES (?, ?, 1)';
-      connection.query(insertQuery, [cartId, itemId], (err, results) => {
+      // Item doesn't exist, add new entry
+      const insertQuery = 'INSERT INTO webpage.cart_items (cart_id, item_id, quantity) VALUES (?, ?, ?)';
+      console.log('Adding new item to cart with query:', insertQuery, 'and values:', [cartId, itemId, 1]);
+      
+      connection.query(insertQuery, [cartId, itemId, 1], (err) => {
         if (err) {
           console.error('Error adding to cart:', err);
-          return res.status(500).json({ error: 'Database error.' });
+          return res.status(500).json({ error: 'Database error adding to cart: ' + err.message });
         }
+        console.log('Successfully added new item to cart');
         res.json({ message: 'Item added to cart.' });
       });
     }
@@ -211,7 +284,7 @@ app.delete('/api/cart_items', (req, res) => {
   }
 
   // Step 1: Get the cart_id for the user
-  const getCartIdQuery = 'SELECT cart_id FROM cart WHERE user_id = ?';
+  const getCartIdQuery = 'SELECT cart_id FROM webpage.cart WHERE user_id = ?';
   connection.query(getCartIdQuery, [userId], (err, results) => {
       if (err) {
           console.error('Error fetching cart_id:', err);
@@ -227,7 +300,7 @@ app.delete('/api/cart_items', (req, res) => {
       console.log(`Found cart_id: ${cartId} for user_id: ${userId}`);
 
       // Step 2: Delete the item from the cart_items table
-      const deleteItemQuery = 'DELETE FROM cart_items WHERE cart_id = ? AND item_id = ?';
+      const deleteItemQuery = 'DELETE FROM webpage.cart_items WHERE cart_id = ? AND item_id = ?';
       connection.query(deleteItemQuery, [cartId, itemId], (err, results) => {
           if (err) {
               console.error('Error removing item from cart:', err);
