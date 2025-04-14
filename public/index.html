@@ -7,47 +7,47 @@
     <title>Items and Users</title>
     <link rel="stylesheet" href="styles.css">
     <script src="index.js" defer></script>
-
 </head>
 
 <body>
-
-    <!-- Search Input -->
-    <input type="text" id="searchInput" placeholder="Search for items...">
-    <button id="searchButton">Search</button>
-
-    <h1 id='items list' style="
-color: #2f1847ff;
-font-size: 38px;
-font-family: sans-serif;
-">Available Items</h1>
-
-    <div id="itemsGrid"></div>
-
-    <!-- User Form Pop-up -->
-    <div id="userFormPopup" class="user-form-popup">
-        <form id="user-form">
-            <h3>Create User</h3>
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <button type="submit">Submit</button>
-            <button type="button" id="closeUserForm" class="close-user-form">Close</button>
+    <!-- User Form - Now at the top of the page -->
+    <div id="userFormContainer" class="user-form-container">
+        <form id="user-form" class="user-form">
+            <h2>Create User to Start Shopping</h2>
+            <div class="user-form-input-group">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <button type="submit">Create User</button>
+            </div>
+            <p id="user-feedback" style="text-align: center; color: var(--white);"></p>
         </form>
-        <p id="user-feedback"></p>
     </div>
 
-    <p id="user-feedback"></p>
+    <!-- Header with Search -->
+    <div class="header">
+        <div id="search-container">
+            <input type="text" id="searchInput" placeholder="Search for items...">
+            <button id="searchButton">Search</button>
+        </div>
+        <div class="header-right">
+            <span id="userDisplay" class="user-display"></span>
+            <button id="cartButton" class="cart-button">
+                Cart <span id="cartCount" class="cart-counter">0</span>
+            </button>
+        </div>
+    </div>
 
-    <!-- Cart Button -->
-    <button id="cartButton" class="cart-button">
-        Cart <span id="cartCount" class="cart-counter">0</span>
-    </button>
+    <!-- Main Content -->
+    <main>
+        <h1>Available Items</h1>
+        <div id="itemsGrid"></div>
+    </main>
 
     <!-- Cart Sidebar -->
     <div id="cartSidebar" class="cart-sidebar">
         <h3>Your Cart</h3>
         <ul id="cartItems" class="cart-items"></ul>
-        <button id="closeCart" class="close-cart">Close</button>
+        <button id="closeCart" class="close-cart">Close Cart</button>
     </div>
 
 </body>
