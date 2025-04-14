@@ -199,31 +199,47 @@
         // Handle user form submission
         document.getElementById('user-form').addEventListener('submit', async function (e) {
             e.preventDefault();
-
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
 
             try {
                 const response = await fetch('/api/users', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ username, email })
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    currentUserId = data.userId; // Ensure currentUserId is set correctly
-                    document.getElementById('user-feedback').textContent = 'User created successfully!';
-                    fetchItems();
-                    //fetchCart();
-                    closeUserFormPopup(); // Close the popup
-                    // Close the popup
-                } else {
-                    const data = await response.json();
-                    document.getElementById('user-feedback').textContent = data.message || data.error;
+                if (!response.ok) {
+                    throw new Error('Failed to create user');
                 }
+
+                const data = await response.json();
+                currentUserId = data.userId;
+                
+                // Hide the user form
+                document.getElementById('userFormContainer').style.display = 'none';
+                
+                // Display the username in the header
+                const userDisplay = document.getElementById('userDisplay');
+                userDisplay.textContent = username;
+                
+                // Update the main content margin
+                document.querySelector('main').style.marginTop = '80px';
+                
+                // Show success message
+                document.getElementById('user-feedback').textContent = 'User created successfully!';
+                document.getElementById('user-feedback').style.color = 'var(--white)';
+                
+                // Clear the form
+                document.getElementById('username').value = '';
+                document.getElementById('email').value = '';
+                
             } catch (error) {
-                console.error('Error creating user:', error);
+                console.error('Error:', error);
+                document.getElementById('user-feedback').textContent = 'Error creating user. Please try again.';
+                document.getElementById('user-feedback').style.color = 'var(--secondary-color)';
             }
         });
 
