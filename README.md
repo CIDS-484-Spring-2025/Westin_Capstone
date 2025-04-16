@@ -43,5 +43,7 @@ Back End:
 - Added item tags for more efficient searching
 - Added item details page
 - Added a new table; cart_items for better logic handling
+- Refactored a lot of server and database code
+- Link to milestone 3 https://youtu.be/TCk9Dx70FX0
 
   
