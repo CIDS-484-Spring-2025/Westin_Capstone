@@ -1,0 +1,120 @@
+/* Modern color scheme */
+:root {
+    --primary-color: #2e6f95ff; /* UCLA Blue - Main brand color */
+    --secondary-color: #b7094cff; /* Amaranth Purple - Accent color */
+    --accent-color: #0091adff; /* Blue Munsell - Call to action */
+    --background-color: #455e89ff; /* Yinmn Blue - Background */
+    --text-color: #ffffff; /* White - Text */
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+// item details
+.item-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--primary-color);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 1000px;
+    width: 100%;
+    box-shadow: var(--shadow);
+    margin-top: 20px;
+}
+
+/* Style for the item image */
+.item-image {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+}
+
+/* Style for the item details (name and description) */
+.item-details {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    color: var(--white);
+}
+
+/* Style for the item name */
+.item-name {
+    font-size: 2rem;
+    color: var(--white);
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Style for the item description */
+.item-description {
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+/* Style for the item price */
+.item-price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+}
+
+.add-to-cart {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    padding: 15px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.add-to-cart:hover {
+    background-color: var(--accent-color);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+@media (min-width: 768px) {
+    .item-container {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    .item-image {
+        margin-bottom: 0;
+        flex: 1;
+    }
+
+    .item-details {
+        flex: 1;
+        text-align: left;
+    }
+}

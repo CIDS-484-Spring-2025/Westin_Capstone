@@ -1,17 +1,26 @@
 # Dependencies
 node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
+package-lock.json
 
 # Environment variables
 .env
 .env.local
 .env.*.local
 
-# IDE
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
 .idea/
 .vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 *.swp
 *.swo
 
@@ -21,4 +30,4 @@ Thumbs.db
 
 # Build output
 dist/
-build/ 
+build/
