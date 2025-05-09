@@ -12,6 +12,7 @@
 
 body {
     font-family: 'Arial', sans-serif;
+    font-weight: bold;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -20,74 +21,9 @@ body {
     line-height: 1.6;
 }
 
-/* User Form - Now at the top of the page */
-.user-form-container {
-    background-color: var(--primary-color);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    position: relative;
-    z-index: 1000;
-    margin-top: 80px; /* Increased from 60px to 80px */
-}
-
-.user-form {
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.user-form h2 {
-    color: var(--white);
-    margin: 0 0 20px 0;
-    text-align: center;
-    font-size: 1.5rem;
-}
-
-.user-form-input-group {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-}
-
-.user-form input {
-    border: 2px solid var(--secondary-color);
-    border-radius: 25px;
-    padding: 12px 15px;
-    width: 250px;
-    transition: var(--transition);
-    background-color: rgba(255, 255, 255, 0.9);
-    color: var(--primary-color);
-}
-
-.user-form input:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px var(--accent-color);
-}
-
-.user-form button {
-    background-color: var(--secondary-color);
-    color: var(--white);
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.user-form button:hover {
-    background-color: var(--accent-color);
-    color: var(--white);
-    transform: translateY(-2px);
-}
-
 /* Header and Navigation */
 .header {
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
     padding: 1rem;
     box-shadow: var(--shadow);
     position: fixed;
@@ -99,6 +35,13 @@ body {
     justify-content: space-between;
     align-items: center;
     height: 60px;
+    
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
 }
 
 .logo h1 {
@@ -113,6 +56,7 @@ body {
 #search-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     flex: 1;
     max-width: 500px;
@@ -123,6 +67,7 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    margin-left: auto;
 }
 
 #searchInput {
@@ -143,7 +88,7 @@ body {
 
 #searchButton {
     padding: 10px 20px;
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: var(--white);
     border: none;
     border-radius: 25px;
@@ -157,11 +102,101 @@ body {
     color: var(--white);
 }
 
+/* Form Popups */
+.form-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    background-color: var(--secondary-color);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px;
+}
+
+.user-form,
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-form h2,
+.login-form h2 {
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.user-form-input-group,
+.login-form-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-form input,
+.login-form input {
+    padding: 0.8rem;
+    border: 1px solid var(--secorndary-color);
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.user-form button,
+.login-form button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.user-form button:hover,
+.login-form button:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.close-form {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+    margin-top: 1rem;
+}
+
+.close-form:hover {
+    background-color: var(--accent-color);
+    color: var(--white);
+}
+
 /* Items Grid */
 #itemsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
+    gap: 40px 10px;
     padding: 100px 20px 20px;
     max-width: 1200px;
     margin: 0 auto;
@@ -231,30 +266,47 @@ body {
     color: var(--white);
 }
 
-/* Cart */
-.cart-button {
-    background-color: var(--secondary-color);
+/* Header Buttons */
+.header-button {
+    background-color: var(--primary-color);
     color: var(--white);
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-weight: bold;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.header-button:hover {
+    background-color: var(--accent-color);
+}
+
+.cart-button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: var(--transition);
+    gap: 8px;
 }
 
 .cart-button:hover {
     background-color: var(--accent-color);
-    color: var(--white);
 }
 
 .cart-counter {
     background-color: var(--accent-color);
     color: var(--white);
-    padding: 2px 8px;
+    padding: 2px 6px;
     border-radius: 12px;
-    font-size: 0.8rem;
+    font-size: 0.8em;
 }
 
 /* Cart Sidebar */
@@ -337,7 +389,7 @@ body {
 
 /* Main Content */
 main {
-    margin-top: 160px; /* Increased from 140px to 160px to maintain spacing */
+    margin-top: 80px;
     padding: 20px;
 }
 
@@ -348,116 +400,7 @@ main h1 {
     font-size: 2rem;
 }
 
-/* User Form */
-.user-form-popup {
-    background-color: var(--primary-color);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    color: var(--white);
-}
-
-.user-form-popup input {
-    border: 2px solid var(--secondary-color);
-    border-radius: 25px;
-    padding: 12px 15px;
-    margin-bottom: 15px;
-    width: 100%;
-    transition: var(--transition);
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.user-form-popup input:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px var(--accent-color);
-}
-
-.user-form-popup button {
-    background-color: var(--secondary-color);
-    color: var(--white);
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-weight: bold;
-    transition: var(--transition);
-}
-
-.user-form-popup button:hover {
-    background-color: var(--accent-color);
-    color: var(--white);
-}
-
-.login-form-container {
-    background-color: var(--primary-color);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    position: relative;
-    z-index: 1000;
-    margin-top: 20px;
-}
-
-.login-form {
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.login-form h2 {
-    color: var(--white);
-    margin: 0 0 20px 0;
-    text-align: center;
-    font-size: 1.5rem;
-}
-
-.login-form-input-group {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-}
-
-.login-form input {
-    border: 2px solid var(--secondary-color);
-    border-radius: 25px;
-    padding: 12px 15px;
-    width: 250px;
-    transition: var(--transition);
-    background-color: rgba(255, 255, 255, 0.9);
-    color: var(--primary-color);
-}
-
-.login-form input:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px var(--accent-color);
-}
-
-.login-form button {
-    background-color: var(--secondary-color);
-    color: var(--white);
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.login-form button:hover {
-    background-color: var(--accent-color);
-    color: var(--white);
-    transform: translateY(-2px);
-}
-
-.item-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
+/* Quantity Controls */
 .quantity-controls {
     display: flex;
     align-items: center;

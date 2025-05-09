@@ -10,32 +10,6 @@
 </head>
 
 <body>
-    <!-- User Form - Now at the top of the page -->
-    <div id="userFormContainer" class="user-form-container">
-        <form id="user-form" class="user-form">
-            <h2>Create User to Start Shopping</h2>
-            <div class="user-form-input-group">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="email" id="email" placeholder="Email" required>
-                <button type="submit">Create User</button>
-            </div>
-            <p id="user-feedback" style="text-align: center; color: var(--white);"></p>
-        </form>
-    </div>
-
-    <!-- Login From - Next to the Create user form-->
-    <div id="loginFormContainer" class="login-form-container">
-        <form id="login-form" class="login-form">
-            <h2>Login</h2>
-            <div class="login-form-input-group">
-                <input type="text" id="login-username" placeholder="Username" required>
-                <input type="email" id="login-email" placeholder="Email" required>
-                <button type="submit">Login</button>
-            </div>
-            <p id="login-feedback" style="text-align: center; color: var(--white);"></p>
-        </form>
-    </div>
-
     <!-- Header with Search -->
     <header class="header">
         <div class="logo">
@@ -46,12 +20,46 @@
             <button id="searchButton">Search</button>
         </div>
         <div class="header-right">
+            <button id="loginFormButton" class="header-button">Login</button>
+            <button id="userFormButton" class="header-button">Create Account</button>
             <span id="userDisplay" class="user-display"></span>
             <button id="cartButton" class="cart-button">
                 Cart <span id="cartCounter" class="cart-counter">0</span>
             </button>
         </div>
     </header>
+
+    <!-- User Form Popup -->
+    <div id="userFormPopup" class="form-popup" style="display: none;">
+        <div class="form-container">
+            <form id="user-form" class="user-form">
+                <h2>Create User to Start Shopping</h2>
+                <div class="user-form-input-group">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <button type="submit">Create User</button>
+                </div>
+                <p id="user-feedback" style="text-align: center; color: var(--white);"></p>
+                <button type="button" id="closeUserForm" class="close-form">Close</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Form Popup -->
+    <div id="loginFormPopup" class="form-popup" style="display: none;">
+        <div class="form-container">
+            <form id="login-form" class="login-form">
+                <h2>Login</h2>
+                <div class="login-form-input-group">
+                    <input type="text" id="login-username" placeholder="Username" required>
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <button type="submit">Login</button>
+                </div>
+                <p id="login-feedback" style="text-align: center; color: var(--white);"></p>
+                <button type="button" id="closeLoginForm" class="close-form">Close</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main>

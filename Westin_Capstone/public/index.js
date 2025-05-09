@@ -7,7 +7,7 @@
         // Fetch items on page load
         document.addEventListener('DOMContentLoaded', () => {
             fetchItems();
-            showUserFormPopup();
+            attachEventListeners();
         });
 
         // Disaply all items from the database onto the webpage
@@ -283,6 +283,41 @@
         // Initialize the items display on page load
         window.onload = fetchItems;
 
+        // Attach event listeners
+        function attachEventListeners() {
+            // Toggle user form pop-up
+            document.getElementById('userFormButton').addEventListener('click', function () {
+                document.getElementById('userFormPopup').style.display = 'flex';
+            });
+
+            // Toggle login form pop-up
+            document.getElementById('loginFormButton').addEventListener('click', function () {
+                document.getElementById('loginFormPopup').style.display = 'flex';
+            });
+
+            // Close user form popup
+            document.getElementById('closeUserForm').addEventListener('click', function () {
+                document.getElementById('userFormPopup').style.display = 'none';
+            });
+
+            // Close login form popup
+            document.getElementById('closeLoginForm').addEventListener('click', function () {
+                document.getElementById('loginFormPopup').style.display = 'none';
+            });
+
+            // Toggle cart sidebar
+            document.getElementById('cartButton').addEventListener('click', function () {
+                document.getElementById('cartSidebar').style.right = '0';
+            });
+
+            document.getElementById('closeCart').addEventListener('click', function () {
+                document.getElementById('cartSidebar').style.right = '-300px';
+            });
+
+            // Add event listener to search button
+            document.getElementById('searchButton').addEventListener('click', searchItems);
+        }
+
         // Handle user form submission
         document.getElementById('user-form').addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -306,14 +341,15 @@
                 currentUserId = data.userId;
                 
                 // Hide the user form
-                document.getElementById('userFormContainer').style.display = 'none';
+                document.getElementById('userFormPopup').style.display = 'none';
+                
+                // Hide the login and create account buttons
+                document.getElementById('loginFormButton').style.display = 'none';
+                document.getElementById('userFormButton').style.display = 'none';
                 
                 // Display the username in the header
                 const userDisplay = document.getElementById('userDisplay');
                 userDisplay.textContent = username;
-                
-                // Update the main content margin
-                document.querySelector('main').style.marginTop = '80px';
                 
                 // Show success message
                 document.getElementById('user-feedback').textContent = 'User created successfully!';
@@ -362,20 +398,24 @@
                 // Update cart UI
                 updateCartUI();
 
-                // Hide both forms
-                document.getElementById('loginFormContainer').style.display = 'none';
-                document.getElementById('userFormContainer').style.display = 'none';
+                // Hide the login form
+                document.getElementById('loginFormPopup').style.display = 'none';
+                
+                // Hide the login and create account buttons
+                document.getElementById('loginFormButton').style.display = 'none';
+                document.getElementById('userFormButton').style.display = 'none';
                 
                 // Display the username in the header
                 const userDisplay = document.getElementById('userDisplay');
                 userDisplay.textContent = username;
 
-                // Update the main content margin
-                document.querySelector('main').style.marginTop = '20px';
-
                 // Show success message
                 document.getElementById('login-feedback').textContent = 'Logged in successfully!';
                 document.getElementById('login-feedback').style.color = 'var(--white)';
+                
+                // Clear the form
+                document.getElementById('login-username').value = '';
+                document.getElementById('login-email').value = '';
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -383,48 +423,6 @@
                 document.getElementById('login-feedback').style.color = 'var(--secondary-color)';
             }
         });
-
-
-        // Attach event listeners
-        function attachEventListeners() {
-            // Toggle user form pop-up
-            document.getElementById('userFormButton').addEventListener('click', function () {
-                document.getElementById('userFormPopup').style.display = 'block';
-            });
-
-            // Toggle login form pop-up
-            document.getElementById('loginFormButton').addEventListener('click', function () {
-                document.getElementById('loginFormPopup').style.display = 'block';
-            });
-
-            document.getElementById('closeUserForm').addEventListener('click', function () {
-                closeUserFormPopup();
-            });
-
-            // Toggle cart sidebar
-            document.getElementById('cartButton').addEventListener('click', function () {
-                document.getElementById('cartSidebar').style.right = '0';
-            });
-
-            document.getElementById('closeCart').addEventListener('click', function () {
-                document.getElementById('cartSidebar').style.right = '-300px';
-            });
-
-            // Add event listener to search button
-            document.getElementById('searchButton').addEventListener('click', searchItems);
-        }
-
-        // Show user form popup on page load
-        function showUserFormPopup() {
-            document.getElementById('userFormPopup').style.display = 'block';
-        }
-
-        // Close user form popup
-        function closeUserFormPopup() {
-            document.getElementById('userFormPopup').style.display = 'none';
-        }
-
-      
 
         // Search items
         async function searchItems() {
@@ -455,7 +453,6 @@
                 document.getElementById('itemsGrid').innerHTML = '<p>Failed to load search results.</p>';
             }
         }
-
 
         // Open Cart Sidebar
         document.getElementById('cartButton').addEventListener('click', () => {
