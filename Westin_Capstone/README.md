@@ -1,14 +1,15 @@
 # Westin_Capstone
 
 ## Project Overview
-I am creating an E-commerce website similar to that of Amazon, Newegg, micro center etc. I want to create a website for the main reason of learning how both the front-end and back-end of a website works. The focus of this is to utilize my current skills and build new ones with technology I have not used before.
+Wes's Tek is a E-commerce technology store similar to Micro Center, Best Buy, and newegg. I choose to build this type of website for a few reasons: one being the overwhelming popularity of these sites in todays shopping market, and two for learning the basic building blocks of how a website operates. Using the fundamental languages and frameworks, I was able to build a basic functioning website from scratch. My goal was to see how far I could go without any sort of prebuilt framework in order for me to learn the most I could during this process. I hope you enjoy!
 
 ## Goals
 - Create a user-freindly user interface
 - Create user accounts
 - Have a cart to keep items
-- Have a complete backend
+- Have a complete backend including a database, api's, and security
 - Have search funcionality
+
 
 ## Technology 
 Front End:
@@ -17,7 +18,8 @@ Front End:
 - Javascript
 
 Back End:
-- mySQL 
+- mySQL
+- Express.js
 - Node.js
 
 ## Timeline
@@ -45,5 +47,11 @@ Back End:
 - Added a new table; cart_items for better logic handling
 - Refactored a lot of server and database code
 - Link to milestone 3 https://youtu.be/TCk9Dx70FX0
+
+### Final Milestone
+- Added Login functionality which allows user carts to be restored and added to
+- Updated the database and server code to handle connection issues
+- Updated UI to have a cleaner and smoother feel
+  
 
   
