@@ -1,7 +1,7 @@
 # Westin_Capstone
 
 ## Project Overview
-Wes's Tek is a E-commerce technology store similar to Micro Center, Best Buy, and newegg. I choose to build this type of website for a few reasons: one being the overwhelming popularity of these sites in todays shopping market, and two for learning the basic building blocks of how a website operates. Using the fundamental languages and frameworks, I was able to build a basic functioning website from scratch. My goal was to see how far I could go without any sort of prebuilt framework in order for me to learn the most I could during this process. I hope you enjoy!
+Wes's Tek is an E-commerce technology store similar to Micro Center, Best Buy, and newegg. I chose to build this type of website for a few reasons: one being the overwhelming popularity of these sites in todays shopping market, and two for learning the basic building blocks of how a website operates. Using the fundamental languages and frameworks, I was able to build a basic functioning website from scratch. My goal was to see how far I could go without any sort of prebuilt framework in order for me to learn the most I could during this process. I hope you enjoy!
 
 ## Goals
 - Create a user-freindly user interface
