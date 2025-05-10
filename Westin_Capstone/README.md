@@ -52,6 +52,13 @@ Back End:
 - Added Login functionality which allows user carts to be restored and added to
 - Updated the database and server code to handle connection issues
 - Updated UI to have a cleaner and smoother feel
+
+### List of Features Working
+- Create a user or Login an existing user
+- Add items to a cart
+- Update item quantities in the cart
+- Search Items using a search bar
+- View item details in a new page
   
 
   
